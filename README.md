@@ -1,4 +1,4 @@
-# MERN-PROJECT-BACKEND
+# KLOUT FRONTEND
 
 KLOUT
 
@@ -10,7 +10,7 @@ Ironhack project at end of module 3 of Barcelona Full Stack Web Development Part
 
 # Link to App:
 
-https://klout.herokuapp.com/
+- [Klout](https://klout.herokuapp.com/)
 
 ## Description
 
@@ -38,18 +38,18 @@ View reports of your presence, reach and interaction of your social networks
 
 - Applicaction Reports
 
-  - **home** -
-  - **social profile** -
-  - **evolution** -
-  - **post** -
-
+  - **home** - 
+  - **social profile** - 
+  - **evolution** - 
+  - **post** - 
+  
 - Applicaction Config
 
-  - **profile** -
-  - **add networks** -
-  - **link network** -
-  - **network account** -
-  - **post** -
+  - **profile** - 
+  - **add networks** - 
+  - **link network** - 
+  - **network account** - 
+  - **post** - 
   - **top ranking** -
 
 ## Backlog
@@ -58,26 +58,25 @@ List of other features outside of the MVPs scope
 
 REAL Transactions
 
-## ROUTES: POR DEFINIR
+## ROUTES:  POR DEFINIR
 
-| Method | URL         | Description                                              |
-| ------ | ----------- | -------------------------------------------------------- |
-| GET    | /           | Renders index                                            |
-| GET    | /about      | Renders about                                            |
-| GET    | /auth/login | Redirects to /app/ if user logged in. Renders auth/login |
-| POST   | /auth/login | Redirects to /app/ if user logged in.                    |
+| Method | URL            | Description                                              |
+| ------ | -------------- | -------------------------------------------------------- |
+| GET    | /              | Renders index                                            |
+| GET    | api/auth/login | Redirects to /app/ if user logged in. Renders auth/login |
+| POST   | api/auth/login | Return User data if user logged in.                      |
 
 ```
 body:
-    - username
+    - email
     - password
 ```
 
-| Method | URL          | Description                                               |
-| ------ | ------------ | --------------------------------------------------------- |
-| POST   | /auth/logout | Reditect to /                                             |
-| GET    | /auth/signup | Redirects to /app/ if user logged in. Renders auth/signup |
-| POST   | /auth/signup | Redirects to /app/ if user logged in. Redirect auth/login |
+| Method | URL             | Description                                               |
+| ------ | --------------- | --------------------------------------------------------- |
+| POST   | api/auth/logout | Logout                                                    |
+| GET    | api/auth/signup | Redirects to /app/ if user logged in. Renders auth/signup |
+| POST   | api/auth/signup | Add user and return user data                             |
 
 ```
 body:
@@ -87,45 +86,216 @@ body:
     - password
 ```
 
+| Method | URL      | Description |
+| ------ | -------- | ----------- |
+| GET    | api/user | Return User |
+| PUT    | api/user | Update User |
+| DELETE | api/user | Delete User |
+
+```
+body:
+    - name
+    - email
+```
+
+| Method | URL         | Description    |
+| ------ | ----------- | -------------- |
+| POST   | api/network | Add Network    |
+| GET    | api/network | Return Network |
+| PUT    | api/network | Update Network |
+| DELETE | api/network | Delete Network |
+
+
+```
+body:
+    - facebook
+    - twitter
+    - instagram
+```
+| Method | URL         | Description           |
+| ------ | ----------- | --------------------- |
+| GET    | api/support | Return Ticket Support |
+| POST   | api/support | Add Ticket            |
+
+
+```
+body:
+    - name
+    - email
+    - subject
+    - message
+```
+
+
 ## Models
 
 ```
 User model
 
-- username: String
-- email: String
-- name: String
-- password: String
-- image: String
+{
+    name: {
+      type: String,
+      required: [true, "The name is required"],
+    },
+    surname: {
+      type: String,
+      required: [true, "The surname is required"],
+    },
+    email: {
+      type: String,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [/^\S+@\S+\.\S+$/, "Invalid email address"],
+      required: [true, "The email is required"],
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    imageUrl: {
+      type: String,
+      match: [/^(ftp|http|https):\/\/[^ "]+$/, "Invalid url"],
+      default:
+        "https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png",
+    },
 
+    description: {
+      type: String,
+      default: "There isn't any description for this user yet.",
+    },
+  },
+  { timestamps: true }
+ 
 
 ```
 
 ```
 Network model
 
-  facebook: {
-    - username: String
-    - password: String
-  }
+   {
+      facebook: {
+        type: String,
+        match: [
+          /^(https?:\/\/){0,1}(www\.){0,1}facebook\.com/gm,
+          "Invalid Facebook address",
+        ],
+        default: "No facebook account information provided",
+      },
+      twitter: {
+        type: String,
+        match: [
+          /^(https?:\/\/){0,1}(www\.){0,1}twitter\.com/gm,
+          "Invalid Facebook address",
+        ],
+        default: "No twitter account information provided",
+      },
+      instagram: {
+        type: String,
+        match: [
+          /^(https?:\/\/){0,1}(www\.){0,1}instagram\.com/gm,
+          "Invalid Instagram address",
+        ],
+        default: "No instagram account information provided",
+      },
+      linkedin: {
+        type: String,
+        match: [
+          /^(https?:\/\/){0,1}(www\.){0,1}linkedin\.com/gm,
+          "Invalid Instagram address",
+        ],
+        default: "No linkedin account information provided",
+      },
+    },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    
+  },
+  { timestamps: true }
 
-  twitter: {
-    - username: String
-    - password: String
-  }
+```
+```
+Report model
 
-  instagram: {
-    - username: String
-    - password: String
-  }
+        facebook: {
+          follows: { type: Number },
+          like: { type: Number },
+          rate: { type: Number },
+        },
+        twitter: {
+          follows: { type: Number },
+          like: { type: Number },
+          rate: { type: Number },
+        },
+        Instagram: {
+          follows: { type: Number },
+          like: { type: Number },
+          rate: { type: Number },
+        },
+        Linkedin: {
+          follows: { type: Number },
+          like: { type: Number },
+          rate: { type: Number },
+        },
+    
+    
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 
-  user: User id
+```
+```
+Ranking model
+
+    facebook: {
+      folowers: { type: Number, required: true },
+      likes: { type: String, required: true },
+      comments: { type: String, required: true },
+      shares: { type: String, required: true },
+    },
+    twitter: {
+      folowers: { type: Number, required: true },
+      likes: { type: String, required: true },
+      comments: { type: String, required: true },
+      retweets: { type: String, required: true },
+    },
+    instagram: {
+      folowers: { type: Number, required: true },
+      likes: { type: String, required: true },
+      comments: { type: String, required: true },
+      shares: { type: String, required: true },
+    },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  
+ 
+
+```
+```
+Log model
+
+  {
+    date: { type: Date, required: true },
+    user: { type: mongoose.SchemaTypes.ObjectId, ref: "User", required: true },
+    description: { type: String, required: true },
+  },
+  { timestamps: true }
+ 
+
+```
+```
+Support model
+
+  {
+    date: { type: Date, required: true },
+    user: { type: mongoose.SchemaTypes.ObjectId, ref: "User", required: true },
+    name: { type: String, required: true },
+    username: { type: String, required: true },
+    subject: { type: String },
+    message: { type: String },
+    status: { type: String, required: true },
+  },
+  { timestamps: true }
+ 
 
 ```
 
-Report model
-
-Ranking model
 
 ## Links
 
@@ -133,14 +303,14 @@ Ranking model
 
 The url to your repository and to your deployed project
 
-- [Repository Link Frontend](https://github.com/jesussantana/MERN-PROJECT-FRONTEND)
-- [Repository Link Backend](https://github.com/jesussantana/MERN-PROJECT-BACKEND)
+- [Repository Link Backend] (https://github.com/jesussantana/KLOUT)
+- [Repository Link Frontend] (https://github.com/jesussantana/KLOUT-FRONTEND)
 
-- [Deploy Link]()
+- [Deploy Link](https://klout.herokuapp.com/)
 
 ### Wireframe
 
-- [Wireframe Link](https://excalidraw.com/#json=5083460385374208,A_crmZXs0-GzenOPz1zLBw)
+- [Wireframe Link](https://excalidraw.com/#json=6009705767895040,49KZI4H-Ua5U1a_n28mY6w)
 
 ### Agile Board
 
@@ -150,4 +320,4 @@ The url to your repository and to your deployed project
 
 The url to your presentation slides
 
-[Slides Link]()
+- [Slides Link](https://prezi.com/i/0g80uhe7lw96/)
